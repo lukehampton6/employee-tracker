@@ -49,8 +49,12 @@ const departmentPrompt = () => {
         }
     ])
     .then((answers) => {
-        db.query(`INSERT INTO departments (name) VALUES ('${JSON.parse(answers)}');`, function (err, results) {
-            console.log(results);
+        db.query(`INSERT INTO departments (dept_name) VALUES ('${answers.departmentName}');`, function (err, results) {
+            if (err) {
+                console.log(err);
+            }
+            console.log('Department added!');
+            initialPrompt();
         })
     })
 }
@@ -97,6 +101,15 @@ const rolePrompt = () => {
             }
         }
     ])
+    .then((answers) => {
+        db.query(`INSERT INTO roles (title, salary, department_id) VALUES ('${answers.roleName}', '${answers.salary}', '${answers.departmentNumber}');`, function (err, results) {
+            if (err) {
+                console.log(err);
+            }
+            console.log('Role added!');
+            initialPrompt();
+        })
+    })
 }
 
 const employeePrompt = () => {
@@ -146,6 +159,15 @@ const employeePrompt = () => {
             message: 'Please enter their managers number'
         }
     ])
+    .then((answers) => {
+        db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('${answers.firstName}', '${answers.lastName}', '${answers.roleNumber}', '${answers.managerNumber}');`, function (err, results) {
+            if (err) {
+                console.log(err);
+            }
+            console.log('Employee added!');
+            initialPrompt();
+        })
+    })
 }
 
 initialPrompt()
@@ -154,18 +176,21 @@ initialPrompt()
             case 'View all departments':
                 db.query('SELECT * FROM departments', function(err, results) {
                     console.table(results);
-                })
+                    initialPrompt();
+                })        
                 break;
 
             case 'View all roles':
                 db.query('SELECT * FROM roles', function(err, results) {
                     console.table(results);
+                    initialPrompt();
                 })
                 break;
 
             case 'View all employees':
                 db.query('SELECT * FROM employees', function(err, results) {
                     console.table(results);
+                    initialPrompt();
                 })
                 break;
 
@@ -185,9 +210,8 @@ initialPrompt()
                 break;
 
             case 'Exit':
+                console.log('Goodbye!');
                 break;
-        }
-        
-            
+            }            
         }
     )
